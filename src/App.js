@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import './App.css';
 
 const telegram = window.Telegram.WebApp;
 
 const App = () => {
+    const [data, setData] = useState({});
+
     const signs = [
         { name: 'aries', period: '21.03 - 20.04', icon: '/' },
         { name: 'taurus', period: '21.04 - 21.05', icon: '/' },
@@ -20,42 +22,49 @@ const App = () => {
         { name: 'pisces', period: '20.02 - 20.03', icon: '/' },
     ];
 
+    const onSendData = useCallback(() => {
+        telegram.setData(JSON.stringify(data));
+    }, [data]);
+
     useEffect(() => {
         telegram.ready();
+
+        telegram.MainButton.setParams({
+            text: 'Get horoscope'
+        });
+
+        telegram.onEvent('mainButtonClicked', onSendData);
+
+        return () => {
+            telegram.offEvent('mainButtonClicked', onSendData);
+        };
     }, []);
     
+
     const getData = async (zodiac_name) => {
-        try {
-            const response = await fetch('https://poker247tech.ru/get_horoscope/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(
-                    {
-                        'sign': zodiac_name,
-                        'language': 'original',
-                        'period': 'today'
-                    }
-                ),
-            });; 
+        const response = await fetch('https://poker247tech.ru/get_horoscope/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    'sign': zodiac_name,
+                    'language': 'original',
+                    'period': 'today'
+                }
+            ),
+        });; 
         
-            if (!response.ok) {
-                throw new Error('Ошибка сервера!');
-            }
-        
-            // const result = await response.json();
-
-            // console.log(result);
-
-            if (telegram.MainButton.isVisible) {
-                telegram.MainButton.hide();
-            } else {
-                telegram.MainButton.show();
-            }
-        } catch (error) {
-            // console.error('Ошибка:', error);
+        if (!response.ok) {
+            throw new Error('Ошибка сервера!');
         }
+        
+        const result = await response.json();
+
+        setData(result);
+
+        telegram.MainButton.show();
     };
 
     const getSign = (sign) => {
