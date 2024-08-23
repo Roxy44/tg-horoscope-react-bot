@@ -8,3 +8,15 @@ body {
     background: var(--tg-theme-bg-color);
     color: var(--tg-theme-text-color);
 }
+
+.signs-container {
+    display: block;
+    width: 100vw;
+
+    padding: 20px;
+}
+
+.zodiac {
+    width: calc(33% - 20px);
+    margin: 0 20px 20px 0;
+}

@@ -51,11 +51,9 @@ const App = () => {
 
         const result = await response.json();
 
-        console.log(result);
+        telegram.sendData(JSON.stringify(result?.horoscope));
 
-        telegram.sendData(JSON.stringify(result));
-
-        // telegram.close();
+        telegram.close();
     }, [signName]);
 
     useEffect(() => {
@@ -67,7 +65,7 @@ const App = () => {
     }, [onSendData]);
 
     const getSign = (sign) => {
-        return <button className={`sign-${sign.name}`} onClick={() => setSignName(sign.name)}>{`${sign.name} - ${sign.period}`}</button>;
+        return <button className={`sign-${sign.name} zodiac`} onClick={() => setSignName(sign.name)}>{`${sign.name} - ${sign.period}`}</button>;
     };
 
     return (
