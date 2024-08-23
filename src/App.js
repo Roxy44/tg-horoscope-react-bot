@@ -41,7 +41,7 @@ const App = () => {
             throw new Error('Ошибка сервера!');
         }
         
-        telegram.setData(JSON.stringify(await response.json()));
+        telegram.sendData(JSON.stringify(await response.json()));
 
         telegram.close();
     }, [signName]);
