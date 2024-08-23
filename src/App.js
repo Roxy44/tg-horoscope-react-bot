@@ -22,7 +22,31 @@ const App = () => {
         { name: 'pisces', period: '20.02 - 20.03', icon: '/' },
     ];
 
+    useEffect(() => {
+        telegram.MainButton.setParams({
+            text: 'Get horoscope',
+        });
+
+        telegram.MainButton.show();
+    }, []);
+    
+    useEffect(() => {
+        telegram.onEvent('mainButtonClicked', onSendData);
+
+        return () => {
+            telegram.offEvent('mainButtonClicked', onSendData);
+        };
+    }, [onSendData]);
+
     const onSendData = useCallback(async () => {
+        const data = getData();
+        
+        telegram.sendData(data);
+
+        telegram.close();
+    }, [signName]);
+
+    const getData = async () => {
         const response = await fetch('https://poker247tech.ru/get_horoscope/', {
             method: 'POST',
             headers: {
@@ -40,27 +64,9 @@ const App = () => {
         if (!response.ok) {
             throw new Error('Ошибка сервера!');
         }
-        
-        telegram.sendData(JSON.stringify(await response.json()));
 
-        telegram.close();
-    }, [signName]);
-
-    useEffect(() => {
-        telegram.MainButton.setParams({
-            text: 'Get horoscope',
-        });
-
-        telegram.MainButton.show();
-    }, []);
-    
-    useEffect(() => {
-        telegram.onEvent('mainButtonClicked', onSendData);
-
-        return () => {
-            telegram.offEvent('mainButtonClicked', onSendData);
-        };
-    }, [onSendData]);
+        return await response.json();
+    };
 
     const getSign = (sign) => {
         return <button className={`sign-${sign.name}`} onClick={() => setSignName(sign.name)}>{`${sign.name} - ${sign.period}`}</button>;
