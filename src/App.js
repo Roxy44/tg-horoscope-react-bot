@@ -55,7 +55,7 @@ const App = () => {
 
         telegram.sendData(JSON.stringify(result));
 
-        telegram.close();
+        // telegram.close();
     }, [signName]);
 
     useEffect(() => {
