@@ -44,7 +44,7 @@ const App = () => {
                 throw new Error('Ошибка сервера!');
             }
         
-            const result = await response.json();
+            // const result = await response.json();
 
             // console.log(result);
 
