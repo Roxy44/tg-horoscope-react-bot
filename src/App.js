@@ -5,7 +5,7 @@ import './App.css';
 const telegram = window.Telegram.WebApp;
 
 const App = () => {
-    const [data, setData] = useState({});
+    const [signName, setSignName] = useState('');
 
     const signs = [
         { name: 'aries', period: '21.03 - 20.04', icon: '/' },
@@ -22,30 +22,7 @@ const App = () => {
         { name: 'pisces', period: '20.02 - 20.03', icon: '/' },
     ];
 
-    const onSendData = useCallback(() => {
-        telegram.setData(JSON.stringify(data));
-
-        telegram.close();
-    }, [data]);
-
-    useEffect(() => {
-        telegram.ready();
-
-        telegram.MainButton.setParams({
-            text: 'Get horoscope',
-        });
-
-    }, []);
-    
-    useEffect(() => {
-        telegram.onEvent('mainButtonClicked', onSendData);
-
-        return () => {
-            telegram.offEvent('mainButtonClicked', onSendData);
-        };
-    }, [onSendData]);
-
-    const getData = async (zodiac_name) => {
+    const onSendData = useCallback(async () => {
         const response = await fetch('https://poker247tech.ru/get_horoscope/', {
             method: 'POST',
             headers: {
@@ -53,7 +30,7 @@ const App = () => {
             },
             body: JSON.stringify(
                 {
-                    'sign': zodiac_name,
+                    'sign': signName,
                     'language': 'original',
                     'period': 'today'
                 }
@@ -64,15 +41,29 @@ const App = () => {
             throw new Error('Ошибка сервера!');
         }
         
-        const result = await response.json();
+        telegram.setData(JSON.stringify(await response.json()));
 
-        setData(result);
+        telegram.close();
+    }, [signName]);
+
+    useEffect(() => {
+        telegram.MainButton.setParams({
+            text: 'Get horoscope',
+        });
 
         telegram.MainButton.show();
-    };
+    }, []);
+    
+    useEffect(() => {
+        telegram.onEvent('mainButtonClicked', onSendData);
+
+        return () => {
+            telegram.offEvent('mainButtonClicked', onSendData);
+        };
+    }, [onSendData]);
 
     const getSign = (sign) => {
-        return <button className={`sign-${sign.name}`} onClick={() => getData(sign.name)}>{`${sign.name} - ${sign.period}`}</button>;
+        return <button className={`sign-${sign.name}`} onClick={() => setSignName(sign.name)}>{`${sign.name} - ${sign.period}`}</button>;
     };
 
     return (
