@@ -32,7 +32,7 @@ const App = () => {
         telegram.ready();
 
         telegram.MainButton.setParams({
-            text: 'Get horoscope'
+            text: 'Get horoscope',
         });
 
     }, []);
@@ -43,7 +43,7 @@ const App = () => {
         return () => {
             telegram.offEvent('mainButtonClicked', onSendData);
         };
-    }, [onSendData])
+    }, [onSendData]);
 
     const getData = async (zodiac_name) => {
         const response = await fetch('https://poker247tech.ru/get_horoscope/', {
