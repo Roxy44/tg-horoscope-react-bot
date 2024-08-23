@@ -30,7 +30,7 @@ const App = () => {
         telegram.MainButton.show();
     }, []);
     
-    const getData = async () => {
+    const onSendData = useCallback(async () => {
         const response = await fetch('https://poker247tech.ru/get_horoscope/', {
             method: 'POST',
             headers: {
@@ -49,13 +49,7 @@ const App = () => {
             throw new Error('Ошибка сервера!');
         }
 
-        return await response.json();
-    };
-
-    const onSendData = useCallback(async () => {
-        const data = getData();
-        
-        telegram.sendData(JSON.stringify(data));
+        telegram.sendData(JSON.stringify(await response.json()));
 
         telegram.close();
     }, [signName]);
