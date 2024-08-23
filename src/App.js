@@ -24,6 +24,8 @@ const App = () => {
 
     const onSendData = useCallback(() => {
         telegram.setData(JSON.stringify(data));
+
+        telegram.close();
     }, [data]);
 
     useEffect(() => {
@@ -33,13 +35,15 @@ const App = () => {
             text: 'Get horoscope'
         });
 
+    }, []);
+    
+    useEffect(() => {
         telegram.onEvent('mainButtonClicked', onSendData);
 
         return () => {
             telegram.offEvent('mainButtonClicked', onSendData);
         };
-    }, []);
-    
+    }, [onSendData])
 
     const getData = async (zodiac_name) => {
         const response = await fetch('https://poker247tech.ru/get_horoscope/', {
@@ -71,16 +75,11 @@ const App = () => {
         return <button className={`sign-${sign.name}`} onClick={() => getData(sign.name)}>{`${sign.name} - ${sign.period}`}</button>;
     };
 
-    const onClose = () => {
-        telegram.close();
-    };
-
     return (
         <div className='App'>
             <div className='signs-container'>
                 {signs.map(sign => getSign(sign))}
             </div>
-            <button onClick={onClose}>Закрыть</button>
         </div>
     );
 };
