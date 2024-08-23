@@ -6,7 +6,7 @@ const telegram = window.Telegram.WebApp;
 
 const App = () => {
     const [data, setData] = useState('');
-    const [signName, setSignName] = useState('');
+    // const [signName, setSignName] = useState('');
 
     const signs = [
         { name: 'aries', period: '21.03 - 20.04', icon: '/' },
@@ -56,7 +56,7 @@ const App = () => {
         telegram.sendData(JSON.stringify(data));
 
         telegram.close();
-    }, [signName]);
+    }, [data]);
 
     useEffect(() => {
         telegram.onEvent('mainButtonClicked', onSendData);
