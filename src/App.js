@@ -55,7 +55,7 @@ const App = () => {
     const onSendData = useCallback(async () => {
         const data = getData();
         
-        telegram.sendData(data);
+        telegram.sendData(JSON.stringify(data));
 
         telegram.close();
     }, [signName]);
