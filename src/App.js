@@ -5,6 +5,7 @@ import './App.css';
 const telegram = window.Telegram.WebApp;
 
 const App = () => {
+    const [data, setData] = useState('');
     const [signName, setSignName] = useState('');
 
     const signs = [
@@ -30,7 +31,7 @@ const App = () => {
         telegram.MainButton.show();
     }, []);
     
-    const onSendData = useCallback(async () => {
+    const onSetData = async (name) => {
         const response = await fetch('https://poker247tech.ru/get_horoscope/', {
             method: 'POST',
             headers: {
@@ -38,20 +39,21 @@ const App = () => {
             },
             body: JSON.stringify(
                 {
-                    'sign': signName,
+                    'sign': name,
                     'language': 'original',
                     'period': 'today'
                 }
             ),
         });; 
-        
-        if (!response.ok) {
-            throw new Error('Ошибка сервера!');
-        }
-
+    
         const result = await response.json();
 
-        telegram.sendData(JSON.stringify(result?.horoscope));
+        setData(result.horoscope);
+    };
+
+    const onSendData = useCallback(async () => {
+        console.log(data);
+        telegram.sendData(JSON.stringify(data));
 
         telegram.close();
     }, [signName]);
@@ -65,7 +67,7 @@ const App = () => {
     }, [onSendData]);
 
     const getSign = (sign) => {
-        return <button className={`sign-${sign.name} zodiac`} onClick={() => setSignName(sign.name)}>{`${sign.name} - ${sign.period}`}</button>;
+        return <button className={`sign-${sign.name} zodiac`} onClick={() => onSetData(sign.name)}>{`${sign.name} - ${sign.period}`}</button>;
     };
 
     return (
