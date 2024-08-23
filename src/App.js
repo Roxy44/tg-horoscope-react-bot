@@ -46,7 +46,7 @@ const App = () => {
         
             const result = await response.json();
 
-            console.log(result);
+            // console.log(result);
 
             if (telegram.MainButton.isVisible) {
                 telegram.MainButton.hide();
@@ -54,7 +54,7 @@ const App = () => {
                 telegram.MainButton.show();
             }
         } catch (error) {
-            console.error('Ошибка:', error);
+            // console.error('Ошибка:', error);
         }
     };
 
